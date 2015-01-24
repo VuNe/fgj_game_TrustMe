@@ -4,11 +4,12 @@ using System.Collections;
 //******************************************************************************************//
 //class that controls enemy movement
 //******************************************************************************************//
-public class Ghost : MonoBehaviour {
+public class GhostMovement : MonoBehaviour {
 	
 	NavMeshAgent navAgent;
 	Transform player;
 	bool bPlayerVisible = false;
+	bool bPlayerIsAlive = true;
 			
 	public Transform patrolTarget;
 	public float FOW = 110f;
@@ -27,9 +28,12 @@ public class Ghost : MonoBehaviour {
 //******************************************************************************************//
 	void Update () 
 	{
+		IsPlayerAhead (player);
 		ChooseTarget ();
 	}
-//***********************************************************//
+//******************************************************************************************//
+//make the ghost move/rotate towards the target
+//******************************************************************************************//
 	void ChooseTarget ()
 	{
 		if (bPlayerVisible)
@@ -37,57 +41,51 @@ public class Ghost : MonoBehaviour {
 			float distance     = Vector3.Distance(navAgent.transform.position,player.transform.position);
 			transform.rotation = Quaternion.Slerp(transform.rotation, player.transform.rotation, Time.deltaTime);
 
-			if(distance >= 2.0f)
+			if(distance >= 1.5f)
 			{
 					navAgent.SetDestination (player.position);
-					
 			}
 			else{
-				navAgent.Stop();
+					navAgent.Stop();
 			}
 
 		} else {
-			navAgent.Stop();
+					navAgent.Stop();
 		}
 	}
 
 //******************************************************************************************//
 //triggers to check does the ghost see the player or not
 //******************************************************************************************//
-	void OnTriggerStay( Collider target)
+	void OnTriggerEnter( Collider target)
 	{
 		if (target.tag == "Player") 
 		{
-			Vector3 direction = target.transform.position - transform.position;
-			float angle = Vector3.Angle(direction, transform.forward);
-
-			if(angle < FOW * 0.5f)
-			{
-				RaycastHit hit;
-				if(Physics.Raycast(transform.position, direction.normalized, out hit, 100))
-				{
-					if(hit.collider.gameObject.tag == "Player")
-					{
-						bPlayerVisible = true;
-						print("i see you");
-					}
-					else{
-						print("i don't see you");
-						bPlayerVisible = false;
-					}
-
-				}
-
-			}
+			bPlayerVisible = true;
 		}
 	}
-//**************************************************//
-//	void OnTriggerExit( Collider target)
-//	{
-//		if (target.tag == "Player") 
-//		{
-//			bPlayerVisible = false;
-//		}
-//	}
 //******************************************************************************************//
+//check is the player front of ghost's field of view
+//******************************************************************************************//
+
+	void IsPlayerAhead (Transform target)
+	{
+		Vector3 direction = target.transform.position - transform.position;
+		float angle = Vector3.Angle (direction, transform.forward);
+
+		if (angle < FOW * 0.5f) 
+		{
+				RaycastHit hit;
+				if (Physics.Raycast (transform.position, direction.normalized, out hit, 100)) 
+				{
+					if (hit.collider.gameObject.tag == "Player") 
+				 	{
+								bPlayerVisible = true;
+					} else {
+								print ("i don't see you");
+								bPlayerVisible = false;
+					}
+				}
+		}
+	}
 }
