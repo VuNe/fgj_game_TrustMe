@@ -10,7 +10,7 @@ public class Ghost : MonoBehaviour {
 	Transform player;
 	bool bPlayerVisible = false;
 
-	CapsuleCollider col;
+
 
 
 	public Transform patrolTarget;
@@ -23,11 +23,10 @@ public class Ghost : MonoBehaviour {
 	{
 		navAgent = GetComponent <NavMeshAgent> ();
 		player   = GameObject.FindGameObjectWithTag ("Player").transform;
-		col 	 = GetComponent<CapsuleCollider> ();
 
 	}	
 //******************************************************************************************//
-//get the player's position
+//Define the target
 //******************************************************************************************//
 	void Update () 
 	{
@@ -41,7 +40,8 @@ public class Ghost : MonoBehaviour {
 			float distance     = Vector3.Distance(navAgent.transform.position,player.transform.position);
 			transform.rotation = Quaternion.Slerp(transform.rotation, player.transform.rotation, Time.deltaTime);
 
-			if(distance >= 2.0f){
+			if(distance >= 2.0f)
+			{
 					navAgent.SetDestination (player.position);
 					
 			}
