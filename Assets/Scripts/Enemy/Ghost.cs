@@ -9,10 +9,7 @@ public class Ghost : MonoBehaviour {
 	NavMeshAgent navAgent;
 	Transform player;
 	bool bPlayerVisible = false;
-
-
-
-
+			
 	public Transform patrolTarget;
 	public float FOW = 110f;
 
